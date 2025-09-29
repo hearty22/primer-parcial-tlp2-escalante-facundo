@@ -1,7 +1,29 @@
+import { hashPassword } from "../helpers/bcrypt.helper.js";
+import { UserModel } from "../models/mongoose/user.model.js";
+
 export const register = async (req, res) => {
   try {
     // TODO: crear usuario con password hasheada y profile embebido
-    return res.status(201).json({ msg: "Usuario registrado correctamente" });
+    const {username, email, password, role} = req.body
+    const {employeeNumber, firstName, lastName, phone} = req.body.profile;
+    const hashPass = await hashPassword(password);
+    const newUser = await UserModel.create({
+      username: username,
+      email: email,
+      password: hashPass,
+      role: role,
+      profile:{
+        employee_number: employeeNumber,
+        first_name: firstName,
+        last_name: lastName,
+        phone: phone
+      }
+    });
+
+
+    return res.status(201).json({ msg: "Usuario registrado correctamente",
+      user: newUser
+     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Error interno del servidor" });

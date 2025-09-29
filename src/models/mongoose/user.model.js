@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, VirtualType } from "mongoose";
 
 // TODO: completar relacion embebida y configurar el virtuals para el populate inverso con assets
 
@@ -18,12 +18,19 @@ const UserSchema = new Schema(
       enum: ["secretary", "administrator"],
       default: "secretary",
     },
-    deletedAt: { type: Date, default: null },
     // ! FALTA COMPLETAR ACA
+    profile:{
+      first_name:{type: String, required: true},
+      last_name:{type: String, required: true},
+      employee_number:{type: String, required: true},
+      phone:{type: String, optional: true}
+    },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
 
 // ! FALTA COMPLETAR ACA
 
-export const UserModel = model("User", UserSchema);
+
+export const UserModel = model("Users", UserSchema);
