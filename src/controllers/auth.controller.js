@@ -1,4 +1,5 @@
-import { hashPassword } from "../helpers/bcrypt.helper.js";
+import { comparePassword, hashPassword } from "../helpers/bcrypt.helper.js";
+import { signToken } from "../helpers/jwt.helper.js";
 import { UserModel } from "../models/mongoose/user.model.js";
 
 export const register = async (req, res) => {
@@ -19,8 +20,6 @@ export const register = async (req, res) => {
         phone: phone
       }
     });
-
-
     return res.status(201).json({ msg: "Usuario registrado correctamente",
       user: newUser
      });
@@ -32,7 +31,38 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    // TODO: buscar user, validar password, firmar JWT y setear cookie httpOnly
+    // TODO: buscar user, validar pass word, firmar JWT y setear cookie httpOnly
+    const {email, password} = req.body;
+
+    const user = await UserModel.findOne({
+      email: email
+    });
+    if(!user){
+      return res.status(401).json({
+        msg: "credenciales invalidas"
+      });
+    };
+    const passMatch = await comparePassword(password, user.password);
+    if(!passMatch){
+     return res.status(401).json({
+        msg: "credenciales invalidas"
+      });
+    };
+    const payload = {
+      username: user.username,
+      role: user.role,
+      firstName: user.profile.first_name,
+      lastName: user.profile.last_name,
+      employeeNumber: user.profile.employee_number
+    }
+    const token = await signToken(payload);
+    // console.log(token)
+    res.cookie("token", token , {
+    httpOnly: true,
+    secure: false, // solo por HTTPS
+    sameSite: "strict",
+    maxAge: 60 * 60 * 1000 // 1 hora
+    });
     return res.status(200).json({ msg: "Usuario logueado correctamente" });
   } catch (error) {
     console.log(error);

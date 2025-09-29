@@ -75,4 +75,13 @@ export const registerValidation = [
 
 export const loginValidation = [
   // TODO: completar las validaciones para el login
+//   loginValidation:
+// ● email: formato válido, obligatorio
+body("email")
+.notEmpty().withMessage("campo obligatorio")
+.isEmail().withMessage("el campo debe de ser un email valido")
+// ● password: obligatorio, mínimo 8 caracteres
+, body("password")
+.notEmpty().withMessage("el campo debe de ser obligatorio")
+.isLength({min: 8}).withMessage("el campo debe de tener minimo 8 caracteres")
 ];
