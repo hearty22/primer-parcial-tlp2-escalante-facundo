@@ -1,5 +1,5 @@
 import { comparePassword, hashPassword } from "../helpers/bcrypt.helper.js";
-import { signToken } from "../helpers/jwt.helper.js";
+import { signToken, verifyToken } from "../helpers/jwt.helper.js";
 import { UserModel } from "../models/mongoose/user.model.js";
 
 export const register = async (req, res) => {
@@ -73,6 +73,11 @@ export const login = async (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     // TODO: devolver profile del user logueado actualmente
+    const userToken = req.user;
+    const user = await UserModel.findOne({
+      username: userToken.username
+    });
+    const profile = user.profile
     return res.status(200).json({ data: profile });
   } catch (error) {
     console.log(error);
