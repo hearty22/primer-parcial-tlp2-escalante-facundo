@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-
+import { UserModel } from "./user.model.js";
 export const ProfileModel = sequelize.define("Profile", {
   employee_number: {
     type: DataTypes.STRING(20),
@@ -15,3 +15,5 @@ export const ProfileModel = sequelize.define("Profile", {
 // * 1:1 Profile ↔ User
 // * 'profile' (User) y 'user' (Profile)
 // ! FALTA COMPLETAR ACA
+UserModel.hasOne(ProfileModel, { foreignKey: "user_id", as: "profile" });
+ProfileModel.belongsTo(UserModel, { foreignKey: "user_id", as: "user" });
